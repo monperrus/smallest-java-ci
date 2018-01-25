@@ -16,8 +16,12 @@ We then download the required dependencies:
 JETTY_VERSION=7.0.2.v20100331
 wget -U none http://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/$JETTY_VERSION/jetty-all-$JETTY_VERSION.jar
 wget -U none http://repo1.maven.org/maven2/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar
+#For linux users: 
 curl -LO --tlsv1 https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 unzip ngrok-stable-linux-amd64.zip 
+#For Mac user:
+curl -LO --tlsv1 https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-darwin-386.zip
+unzip ngrok-stable-darwin-386.zip
 ```
 
 We compile the skeleton the continuous integration server:
