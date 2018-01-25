@@ -47,7 +47,7 @@ We configure our Github repository:
 We test that everything works:
 
 * go to <http://localhost:8080> tp check that the CI server is running locally
-* go to your Ngrok forwarding URL (eg <http://8929b010.ngrok.io>) tp check that the CI server is visible from the internet, hence visible from Github
+* go to your Ngrok forwarding URL (eg <http://8929b010.ngrok.io>) to check that the CI server is visible from the internet, hence visible from Github
 * make a commit in your repository
 * observe the result, in two ways:
   * locally: in the console of your first terminal window, observe the requested URL printed on the console
