@@ -29,17 +29,42 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
+        cloneTheProject();
         // 2nd compile the code
+        compile();
+        runTests();
+        notifyUser();
 
         response.getWriter().println("CI job done");
+        response.getWriter().println(baseRequest);
+        response.getWriter().println(request);
+        response.getWriter().println(response);
+
+
     }
  
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
-        Server server = new Server(8080);
+        Server server = new Server(8083);
         server.setHandler(new ContinuousIntegrationServer()); 
         server.start();
         server.join();
+    }
+
+    private static void cloneTheProject(){
+
+    }
+
+    private static void compile(){
+
+    }
+
+    private static void runTests(){
+
+    }
+
+    private static void notifyUser(){
+
     }
 }
