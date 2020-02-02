@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+    implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.26.v20200117'
+    testImplementation(
+            'junit:junit:4.12',
+            'org.junit.jupiter:junit-jupiter-api:5.4.2'
+    )
+    //testRuntime(
+    //        'org.junit.jupiter:junit-jupiter-engine:5.4.2',
+    //        'org.junit.vintage:junit-vintage-engine:5.4.2'
+    //)
+}
+test {
+    useJUnitPlatform()
+}
