@@ -56,7 +56,7 @@ We test that everything works:
 * observe the result, in two ways:
   * locally: in the console of your first terminal window, observe the requested URL printed on the console
   * on github: go to `Settings >> Webhooks` in your repo, click on your newly created webhook, scroll down to "Recent Deliveries", click on the last delivery and the on the `Response tab`, you'll see the output of your server `CI job done`
-  * on ngrok: raise the terminal window with Ngrok, and you'll also the see URLs requested by Github
+  * on ngrok: raise the terminal window with Ngrok, and you'll also the see URLs requested by Github.
 
 We shutdown everything:
 
