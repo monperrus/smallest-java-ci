@@ -1,9 +1,9 @@
 A small Java Continuous Integration server.
 ===========================================================
 
-Here is a tiny CI server skeleton implemented in Java for educational purposes. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty.
+Here is a tiny CI server skeleton implemented in Java for educational purposes. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. We use Maven for building and managing our project.
 
-We assume here that you have a standard Linux machine (eg with Ubuntu), with Java installed.
+We assume here that you have a standard Linux machine (eg with Ubuntu), with Java installed. 
 
 We first checkout this repository:
 ```
