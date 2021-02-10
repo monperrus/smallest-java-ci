@@ -11,6 +11,9 @@ git clone https://github.com/monperrus/smallest-java-ci
 cd smallest-java-ci
 ```
 
+## How to run:
+First,you need to install Maven. Then you can run "mvn package" in the root directory and this will create a jar file. To run the skeleton, use "java -jar target/gs-maven-0.1.0.jar".
+
 We then download the required dependencies:
 ```
 JETTY_VERSION=7.0.2.v20100331
