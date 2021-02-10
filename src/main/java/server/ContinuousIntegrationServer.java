@@ -36,44 +36,43 @@ public class ContinuousIntegrationServer extends AbstractHandler
         baseRequest.setHandled(true);
 
         System.out.println(target);
-        System.out.println(1);
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
         // 2nd compile the code
-        System.out.println(request.getHeader("user-agent"));
-        BufferedReader br = request.getReader();
-        String str;
-        StringBuilder wholeStr = new StringBuilder();
-        while((str = br.readLine()) != null){
-            wholeStr.append(str);
+        String who = request.getHeader("user-agent");
+        if(who.contains("GitHub-Hookshot")){
+            BufferedReader br = request.getReader();
+            String str;
+            StringBuilder wholeStr = new StringBuilder();
+            while ((str = br.readLine()) != null) {
+                wholeStr.append(str);
+            }
+            String ss = wholeStr.toString();
+            com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(ss);
+
+            String refs = jsonObject.get("ref").toString();
+            String[] sss = refs.split("/");
+            String lastOne = sss[sss.length - 1];
+            String git_url = jsonObject.getJSONObject("repository").get("git_url").toString();
+            //Process p1 = Runtime.getRuntime().exec("cd C:\\Users\\Kalle\\git\\cloneplace");
+            String git_url_fixed = git_url.replaceFirst("git", "https");
+            Process p = Runtime.getRuntime().exec("git clone -b" + " " + lastOne + " " + git_url_fixed + " C:\\Users\\Kalle\\git\\cloneplace");
+            InputStream fis = p.getInputStream();
+
+            InputStreamReader isr = new InputStreamReader(fis);
+
+            BufferedReader fg = new BufferedReader(isr);
+            String line = null;
+            System.out.println("git clone -b" + " " + lastOne + " " + git_url_fixed + " ..\\new");
+            while ((line = fg.readLine()) != null) {
+                System.out.println(line);
+                response.getWriter().println(line);
+            }
         }
-        String ss = wholeStr.toString();
-        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(ss);
+            //System.out.println(jsonObject.get(lastOne));
 
-        String refs = jsonObject.get("ref").toString();
-        String[] sss = refs.split("/");
-        String lastOne = sss[sss.length-1];
-        String git_url = jsonObject.getJSONObject("repository").get("git_url").toString();
-        //Process p1 = Runtime.getRuntime().exec("cd C:\\Users\\Kalle\\git\\cloneplace");
-        String git_url_fixed = git_url.replaceFirst("git", "https");
-        Process p = Runtime.getRuntime().exec("git clone -b" +" "+lastOne+" "+ git_url_fixed+" C:\\Users\\Kalle\\git\\cloneplace");
-        InputStream fis=p.getInputStream();
-
-        InputStreamReader isr=new InputStreamReader(fis);
-
-        BufferedReader fg=new BufferedReader(isr);
-        String line=null;
-        System.out.println("git clone -b" +" "+lastOne+" "+ git_url_fixed+" ..\\new");
-        while((line=fg.readLine())!=null)
-        {
-            System.out.println(line);
-            response.getWriter().println(line);
-        }
-
-        //System.out.println(jsonObject.get(lastOne));
-
-        //System.out.println(jsonObject.getJSONObject("repository").get("git_url"));
+            //System.out.println(jsonObject.getJSONObject("repository").get("git_url"));
 
 
     }
