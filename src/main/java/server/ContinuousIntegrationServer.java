@@ -4,26 +4,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonStreamParser;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ajax.JSON;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONWriter;
 
 
-
-
-
-/** 
+/**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
 */
@@ -32,7 +25,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) 
+                       HttpServletResponse response)
         throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
@@ -70,6 +63,10 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 String folder_path = " C:\\Users\\Kalle\\git\\cloneplace";
                 Process p = Runtime.getRuntime().exec("git clone -b" + " " + lastOne + " " + git_url_fixed + folder_path);
 
+
+                //write_payload_to_json(jsonObject, "test.json");
+
+
                 //this I don't quite know what it does
                 InputStream fis = p.getInputStream();
                 InputStreamReader isr = new InputStreamReader(fis);
@@ -87,12 +84,21 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public int dummyFunction() {
         return 1;
     }
- 
+
+    public void write_payload_to_json(JSONObject input, String file_name) {
+        //this function writes a JSONObject to a specified json-file
+        try (FileWriter file = new FileWriter(file_name)) {
+            com.alibaba.fastjson.JSONWriter WT = new JSONWriter(file);
+            WT.writeObject(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
         Server server = new Server(8080);
-        server.setHandler(new ContinuousIntegrationServer()); 
+        server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
     }
