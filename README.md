@@ -1,52 +1,31 @@
 A small Java Continuous Integration server.
 ===========================================================
+This is a simple server for Continuous Integration development. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. We use Maven for building and managing our project.
 
-Here is a tiny CI server skeleton implemented in Java for educational purposes. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. We use Maven for building and managing our project.
+We assume here that you have a standard Linux machine (eg with Ubuntu), with Java and Maven installed. 
 
-We assume here that you have a standard Linux machine (eg with Ubuntu), with Java installed. 
-
-We first checkout this repository:
-```
-git clone https://github.com/monperrus/smallest-java-ci
-cd smallest-java-ci
-```
 
 ## How to run:
-First,you need to install Maven. Then you can run "mvn package" in the root directory and this will create a jar file. To run the skeleton, use "java -jar target/gs-maven-0.1.0.jar".
+After checking out the repository, build it in the root directory using the following command:
 
-We then download the required dependencies:
 ```
-JETTY_VERSION=7.0.2.v20100331
-wget -U none https://repo1.maven.org/maven2/org/eclipse/jetty/aggregate/jetty-all/$JETTY_VERSION/jetty-all-$JETTY_VERSION.jar
-wget -U none https://repo1.maven.org/maven2/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar
-#For linux users: 
-curl -LO --tlsv1 https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-unzip ngrok-stable-linux-amd64.zip 
-#For Mac user:
-curl -LO --tlsv1 https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-darwin-386.zip
-unzip ngrok-stable-darwin-386.zip
+mvn package
 ```
 
-We compile the skeleton the continuous integration server:
+Then start the server on your local machine
 ```
-javac -cp servlet-api-2.5.jar:jetty-all-$JETTY_VERSION.jar ContinuousIntegrationServer.java
+java -jar target/gs-maven-0.1.0.jar
 ```
 
-We run the server on the machine, and we may make it visible on the Internet thanks to [Ngrok](https://ngrok.com/):
+The serverr is visible on the Internet by using [Ngrok](https://ngrok.com/). The public url can be found by running the following commnand in a second terminal window:
 ```
-# open a first terminal window
-JETTY_VERSION=7.0.2.v20100331
-java -cp .:servlet-api-2.5.jar:jetty-all-$JETTY_VERSION.jar ContinuousIntegrationServer
-
 # open a second terminal window
 # this gives you the public URL of your CI server to set in Github
 # copy-paste the forwarding URL "Forwarding                    http://8929b010.ngrok.io -> localhost:8080"
 # note that this url is short-lived, and is reset everytime you run ngrok
 ./ngrok http 8080
-
 ```
-
-We configure our Github repository:
+Copy the url looking like [number sequence].ngrok.io, then go to the GitHub repository you want to the server to monitor. 
 
 * go to `Settings >> Webhooks`, click on `Add webhook`.
 * paste the forwarding URL (eg `http://8929b010.ngrok.io`) in field `Payload URL`) and send click on `Add webhook`. In the simplest setting, nothing more is required.
