@@ -76,6 +76,10 @@ public class ContinuousIntegrationServer extends AbstractHandler
             }
         }
     }
+
+    public int dummyFunction() {
+        return 1;
+    }
  
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
