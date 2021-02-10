@@ -39,26 +39,33 @@ public class ContinuousIntegrationServer extends AbstractHandler
         if(who.contains("GitHub-Hookshot")){
           String what = request.getHeader("X-GitHub-Event");
           if(what.contains("push")){
-          String buildOK = "build not done";
-          String notifyOK = "notification not sent";
+            BufferedReader br = request.getReader();
 
-          String URL = getRepoURL();
-          String cloneOK = cloneRepo(URL);
+            //read the request
+            String JSON = getJSON(br);
 
 
-          if(cloneOK.contains("Cloning OK")){
-            buildOK = buildAndTest("path");
-          }
 
-          if(buildOK.contains("Build OK")){
-            notifyOK = notify(buildOK);
-          }
+            String buildOK = "build not done";
+            String notifyOK = "notification not sent";
 
-          System.out.println("Request handled");
+            String URL = getRepoURL();
+            String cloneOK = cloneRepo(URL);
 
-          if(notifyOK.contains("Notification sent successfully")){
-            System.out.println(notifyOK);
-          }
+
+            if(cloneOK.contains("Cloning OK")){
+              buildOK = buildAndTest("path");
+            }
+
+            if(buildOK.contains("Build OK")){
+              notifyOK = notify(buildOK);
+            }
+
+            System.out.println("Request handled");
+
+            if(notifyOK.contains("Notification sent successfully")){
+              System.out.println(notifyOK);
+            }
 
         /*  if(who.contains("GitHub-Hookshot")){ //this branch is called if the request is a webhook
               //this reads the body of the webhook as a string that is formatted as a json
@@ -104,6 +111,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return 1;
     }
 
+    public String getJSON(BufferedReader br) throws IOException{
+        String str;
+        StringBuilder wholeStr = new StringBuilder();
+        while ((str = br.readLine()) != null) {
+            wholeStr.append(str);
+        }
+        br.close();
+
+        String ss = wholeStr.toString();
+
+        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(ss);
+        return "dummy";
+    }
     public String getRepoURL(){
       //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
