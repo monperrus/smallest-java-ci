@@ -19,7 +19,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ajax.JSON;
 
 
-/** 
+/**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
 */
@@ -28,7 +28,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) 
+                       HttpServletResponse response)
         throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
@@ -41,7 +41,28 @@ public class ContinuousIntegrationServer extends AbstractHandler
         // 1st clone your repository
         // 2nd compile the code
         String who = request.getHeader("user-agent");
-        if(who.contains("GitHub-Hookshot")){ //this branch is called if the request is a webhook
+        String buildOK = "build not done";
+        String notifyOK = "notification not sent";
+
+        String URL = getRepoURL();
+        String cloneOK = cloneRepo(URL);
+
+
+        if(cloneOK.contains("Cloning OK")){
+          buildOK = buildAndTest("path");
+        }
+
+        if(buildOK.contains("Build OK")){
+          notifyOK = notify(buildOK);
+        }
+
+        System.out.println("Request handled");
+
+        if(notifyOK.contains("Notification sent successfully")){
+          System.out.println(notifyOK);
+        }
+
+      /*  if(who.contains("GitHub-Hookshot")){ //this branch is called if the request is a webhook
             //this reads the body of the webhook as a string that is formatted as a json
             BufferedReader br = request.getReader();
             String str;
@@ -74,18 +95,50 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 System.out.println(line);
                 response.getWriter().println(line);
             }
-        }
+        } */
     }
 
     public int dummyFunction() {
+        //dummy function to start testing
+        System.out.println("Calling dummyFunction");
         return 1;
     }
- 
+
+    public String getRepoURL(){
+      //gets the URL for repository to be cloned
+        System.out.println("Getting repository URL");
+        String dummyReturn = "https://github.com/DD2480-Group-15/Assignment_2/";
+        return dummyReturn;
+    }
+
+    public String cloneRepo(String url){
+      //clones the repository, returns status of how it went
+      System.out.println("Cloning repository "+ url);
+      String cloneStatus = "Cloning OK";
+      return cloneStatus;
+    }
+
+    public String buildAndTest(String path){
+      //builds the specified repo path using Maven and returns the status of the build
+      System.out.println("Running mvn package");
+      String buildStatus = "Build and test ok";
+      return buildStatus;
+    }
+
+    public String notify(String status){
+      //sends notification of the build to the webhook
+      System.out.println("Notifying GitHub of build status");
+      String notificationStatus = "Notification sent successfully";
+      return notificationStatus;
+    }
+
+
+
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
     {
         Server server = new Server(8080);
-        server.setHandler(new ContinuousIntegrationServer()); 
+        server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
     }
