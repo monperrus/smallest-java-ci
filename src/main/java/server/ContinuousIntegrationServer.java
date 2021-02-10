@@ -7,18 +7,16 @@ import javax.servlet.ServletException;
 import java.io.*;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONWriter;
-import com.google.gson.Gson;
-import com.google.gson.JsonStreamParser;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.ajax.JSON;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONWriter;
 
-/** 
+
+/**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
 */
@@ -27,7 +25,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
-                       HttpServletResponse response) 
+                       HttpServletResponse response)
         throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
@@ -100,7 +98,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public static void main(String[] args) throws Exception
     {
         Server server = new Server(8080);
-        server.setHandler(new ContinuousIntegrationServer()); 
+        server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
     }
