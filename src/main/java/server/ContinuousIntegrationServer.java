@@ -42,16 +42,13 @@ public class ContinuousIntegrationServer extends AbstractHandler
             BufferedReader br = request.getReader();
 
             //read the request
-            String JSON = getJSON(br);
-
-
+          //  com.alibaba.fastjson.JSONObject JSON = getJSON(br);
+            String thing = getJSON(br);
+            String URL = "blaj"; //getRepoURL(JSON);
+            String cloneOK = cloneRepo(URL);
 
             String buildOK = "build not done";
             String notifyOK = "notification not sent";
-
-            String URL = getRepoURL();
-            String cloneOK = cloneRepo(URL);
-
 
             if(cloneOK.contains("Cloning OK")){
               buildOK = buildAndTest("path");
@@ -112,6 +109,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public String getJSON(BufferedReader br) throws IOException{
+      //reads the request and converts it to a JSON object
+        System.out.println("getJSON");
         String str;
         StringBuilder wholeStr = new StringBuilder();
         while ((str = br.readLine()) != null) {
@@ -122,13 +121,23 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String ss = wholeStr.toString();
 
         com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(ss);
-        return "dummy";
+        return "blaj"; //jsonObject;
     }
-    public String getRepoURL(){
+
+    public String getRepoURL(com.alibaba.fastjson.JSONObject json){
       //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
-        String dummyReturn = "https://github.com/DD2480-Group-15/Assignment_2/";
-        return dummyReturn;
+
+        //this extracts the branch in which the event occurred as lastOne
+      //  String refs = json.get("ref").toString();
+
+        /*String[] sss = refs.split("/");
+        String lastOne = sss[sss.length - 1];
+        //this extracts the url of the repository where the event occurred as git_url
+        String git_url = json.getJSONObject("repository").get("git_url").toString();
+        */
+        String git_url = "dummy url";
+        return git_url;
     }
 
     public String cloneRepo(String url){
