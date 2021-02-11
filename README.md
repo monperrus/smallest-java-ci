@@ -12,7 +12,7 @@ After checking out the repository, build it in the root directory using the foll
 mvn package
 ```
 
-Then start the server on your local machine
+Then start the server on your local machine:
 ```
 java -jar target/gs-maven-0.1.0.jar
 ```
