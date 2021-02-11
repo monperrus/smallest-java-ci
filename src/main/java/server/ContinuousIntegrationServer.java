@@ -64,7 +64,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
               System.out.println(notifyOK);
             }
 
-        /*  if(who.contains("GitHub-Hookshot")){ //this branch is called if the request is a webhook
+        /*
+        //OLD CODE THAT NEEDS TO BE INTEGRATED
+          if(who.contains("GitHub-Hookshot")){ //this branch is called if the request is a webhook
               //this reads the body of the webhook as a string that is formatted as a json
               BufferedReader br = request.getReader();
               String str;
