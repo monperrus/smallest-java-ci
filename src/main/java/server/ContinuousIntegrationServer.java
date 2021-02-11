@@ -42,8 +42,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
             BufferedReader br = request.getReader();
 
             //read the request
-          //  com.alibaba.fastjson.JSONObject JSON = getJSON(br);
-            String thing = getJSON(br);
+            JSONObject JSON = getJSON(br);
+          //  String thing = getJSON(br);
             String URL = "blaj"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
 
@@ -108,7 +108,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return 1;
     }
 
-    public String getJSON(BufferedReader br) throws IOException{
+    public JSONObject getJSON(BufferedReader br) throws IOException{
       //reads the request and converts it to a JSON object
         System.out.println("getJSON");
         String str;
@@ -120,11 +120,11 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
         String ss = wholeStr.toString();
 
-        com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(ss);
-        return "blaj"; //jsonObject;
+        JSONObject jsonObject = JSONObject.parseObject(ss);
+        return jsonObject; //jsonObject;
     }
 
-    public String getRepoURL(com.alibaba.fastjson.JSONObject json){
+    public String getRepoURL(JSONObject json){
       //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
