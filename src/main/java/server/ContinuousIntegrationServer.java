@@ -13,6 +13,15 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+//Import statements for Notify function
+import org.apache.http.HttpEntity;
+import org.apache.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+
+
+
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
@@ -161,7 +170,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     public String notify(String status){
       //sends notification of the build to the webhook
-      String git_url = jsonObject.getJSONObject("repository").get("git_url").toString();
+      String git_url = "www.github.com";
       HttpClient client = HttpClientBuilder.create().build();
       HttpPost post = new HttpPost(git_url);
       post.setHeader("Content-type","application/json");

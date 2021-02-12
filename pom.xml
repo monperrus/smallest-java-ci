@@ -36,6 +36,21 @@
             <version>7.0.2.v20100331</version>
         </dependency>
 
+
+        <!-- https://search.maven.org/remotecontent?filepath=org/apache/httpcomponents/httpclient/4.5.9/httpclient-4.5.9.jar -->
+        <dependency>
+           <groupId>org.apache.httpcomponents</groupId>
+           <artifactId>httpclient</artifactId>
+           <version>4.5.9</version>
+        </dependency>
+
+        <!-- https://search.maven.org/remotecontent?filepath=org/apache/httpcomponents/httpmime/4.5.9/httpmime-4.5.9.jar -->
+        <dependency>
+           <groupId>org.apache.httpcomponents</groupId>
+           <artifactId>httpmime</artifactId>
+           <version>4.5.9</version>
+        </dependency>
+
         <!-- junit 5, unit test -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
