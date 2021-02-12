@@ -196,7 +196,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public String notify(String status){
       //sends notification of the build to the webhook
       String git_url = "www.github.com";
-      DefaultHttpClient httpClient = HttpClients.createDefault();;
+      CloseableHttpClient httpclient  = HttpClients.createDefault();;
       HttpPost post = new HttpPost(git_url);
       post.setHeader("Content-type","application/json");
       post.setHeader("user-agent","Github-Hookshot");
