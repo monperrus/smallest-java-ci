@@ -26,6 +26,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -195,7 +196,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public String notify(String status){
       //sends notification of the build to the webhook
       String git_url = "www.github.com";
-      HttpClient httpClient = HttpClientBuilder.create().build();
+      DefaultHttpClient httpClient = HttpClientBuilder.create().build();
       HttpPost post = new HttpPost(git_url);
       post.setHeader("Content-type","application/json");
       post.setHeader("user-agent","Github-Hookshot");
