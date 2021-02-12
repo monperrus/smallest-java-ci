@@ -29,6 +29,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+
+
 import java.io.IOException;
 
 
@@ -183,7 +185,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public String notify(String status){
       //sends notification of the build to the webhook
       String git_url = "www.github.com";
-      HttpClient client = HttpClientBuilder.create().build();
+      HttpClient httpClient = HttpClientBuilder.create().build();
       HttpPost post = new HttpPost(git_url);
       post.setHeader("Content-type","application/json");
       post.setHeader("user-agent","Github-Hookshot");
@@ -191,7 +193,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
       
       try{
         post.setEntity(new StringEntity("Someone has made a push!"));
-        HttpResponse res = client.execute(post);
+        HttpResponse res = httpClient.execute(post);
 
         System.out.println(EntityUtils.toString(res.getEntity()));
         System.out.println("Notifying GitHub of build status");
