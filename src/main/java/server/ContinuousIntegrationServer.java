@@ -5,16 +5,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
-import java.util.Map;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.util.ajax.JSON;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSONWriter;
-
+import org.json.*;
 
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -36,14 +32,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
         String who = request.getHeader("user-agent");
 
-        if(who.contains("GitHub-Hookshot")){
+        if(who.contains("GitHub-Hookshot")) {
           String what = request.getHeader("X-GitHub-Event");
-          if(what.contains("push")){
+          if(what.contains("push")) {
             BufferedReader br = request.getReader();
-
             //read the request
             JSONObject JSON = getJSON(br);
-          //  String thing = getJSON(br);
+
+            //TODO: remove when JSON is working for everybody
+            JSON.put("name","foo");
+            System.out.println(JSON.get("name"));
+            System.out.println("Pusher: " + JSON.get("pusher"));
+
+            //  String thing = getJSON(br);
             String URL = "blaj"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
 
@@ -110,9 +111,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return 1;
     }
 
-    public JSONObject getJSON(BufferedReader br) throws IOException{
+    public JSONObject getJSON(BufferedReader br) throws IOException {
       //reads the request and converts it to a JSON object
-        System.out.println("getJSON");
+      //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
         String str;
         StringBuilder wholeStr = new StringBuilder();
         while ((str = br.readLine()) != null) {
@@ -121,9 +122,10 @@ public class ContinuousIntegrationServer extends AbstractHandler
         br.close();
 
         String ss = wholeStr.toString();
+        
+        //System.out.println(ss);
 
-        JSONObject jsonObject = JSONObject.parseObject(ss);
-        return jsonObject; //jsonObject;
+        return new JSONObject(ss);
     }
 
     public String getRepoURL(JSONObject json){
@@ -163,15 +165,15 @@ public class ContinuousIntegrationServer extends AbstractHandler
       return notificationStatus;
     }
 
-    public void write_payload_to_json(JSONObject input, String file_name) {
-        //this function writes a JSONObject to a specified json-file
-        try (FileWriter file = new FileWriter(file_name)) {
-            com.alibaba.fastjson.JSONWriter WT = new JSONWriter(file);
-            WT.writeObject(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public void write_payload_to_json(JSONObject input, String file_name) {
+    //     //this function writes a JSONObject to a specified json-file
+    //     try (FileWriter file = new FileWriter(file_name)) {
+    //         com.alibaba.fastjson.JSONWriter WT = new JSONWriter(file);
+    //         WT.writeObject(input);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception
