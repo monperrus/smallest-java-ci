@@ -45,7 +45,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println("Pusher: " + JSON.get("pusher"));
 
             //  String thing = getJSON(br);
-            String URL = "blaj"; //getRepoURL(JSON);
+            String URL = "git@github.com:DD2480-Group-15/Assignment_2.git"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
 
             String buildOK = "build not done";
@@ -144,10 +144,23 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return git_url;
     }
 
-    public String cloneRepo(String url){
-      //clones the repository, returns status of how it went
-      System.out.println("Cloning repository "+ url);
-      String cloneStatus = "Cloning OK";
+    /**
+     * Clones a repo into the directory ./cloned-repo
+     * @param sshURL the ssh url of the repo
+     * @return status of of how the cloning went
+     */
+    public String cloneRepo(String sshURL){
+      System.out.println("Cloning repository "+ sshURL);
+      String cloneStatus;
+
+      try {
+        Runtime.getRuntime().exec("git clone " + sshURL + " ./cloned-repo");
+        cloneStatus = "Cloning OK";
+      } catch (IOException e) {
+        System.out.print("Could not clone repo.");
+        cloneStatus = "Cloning Failed";
+      }
+
       return cloneStatus;
     }
 
