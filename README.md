@@ -28,7 +28,8 @@ The serverr is visible on the Internet by using [Ngrok](https://ngrok.com/). The
 Copy the url looking like [number sequence].ngrok.io, then go to the GitHub repository you want to the server to monitor. 
 
 * go to `Settings >> Webhooks`, click on `Add webhook`.
-* paste the forwarding URL (eg `http://8929b010.ngrok.io`) in field `Payload URL`) and send click on `Add webhook`. In the simplest setting, nothing more is required.
+* paste the forwarding URL (eg `http://8929b010.ngrok.io`) in field `Payload URL`) and send click on `Add webhook`. 
+* **Set the content type to application/json**
 
 We test that everything works:
 
