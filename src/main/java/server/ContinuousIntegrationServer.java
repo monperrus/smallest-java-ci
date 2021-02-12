@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.jetty.server.Server;
@@ -158,6 +160,18 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     public String notify(String status){
       //sends notification of the build to the webhook
+        URL url = new URL(jsonObject.getJSONObject("repository").get("git_url").toString());
+        HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+        connect.setHeader("Content-type", "application/json");
+        connect.setHeader("user-agent", "GitHub-Hookshot");
+        connect.setHeader("X-GitHub-Event", "push");
+        FileEntity body = new FileEntity(new File("test.json"));
+        httpPost.setEntity(body);
+        CloseableHttpResponse response = httpclient.execute(httpPost);
+        System.out.println(response.getStatusLine().getStatusCode());
+        httpclient.close();
+        response.close();
+     
       System.out.println("Notifying GitHub of build status");
       String notificationStatus = "Notification sent successfully";
       return notificationStatus;
