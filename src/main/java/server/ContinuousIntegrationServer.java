@@ -5,12 +5,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
+import java.net.http.HttpClient;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
+
+//Import statements for Notify function
+import org.apache.http.HttpEntity;
+import org.apache.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+
+
 
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -160,10 +170,27 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     public String notify(String status){
       //sends notification of the build to the webhook
+      String git_url = "www.github.com";
+      HttpClient client = HttpClientBuilder.create().build();
+      HttpPost post = new HttpPost(git_url);
+      post.setHeader("Content-type","application/json");
+      post.setHeader("user-agent","Github-Hookshot");
+      post.setHeader("X-Github-Event", "push");
+      
+      try{
+        post.setEntity(new StringEntity("Someone has made a push!"));
+        HttpResponse res = client.execute(post);
+
+        System.out.println(EntityUtils.toString(res.getEntity()));
+        System.out.println("Notifying GitHub of build status");
+        String notificationStatus = "Notification sent successfully";
+        return notificationStatus;
+      }catch(IOException e){
+        e.printStackTrace();
+        return "Notification request failed!";
+      }
      
-      System.out.println("Notifying GitHub of build status");
-      String notificationStatus = "Notification sent successfully";
-      return notificationStatus;
+
     }
 
     // public void write_payload_to_json(JSONObject input, String file_name) {
