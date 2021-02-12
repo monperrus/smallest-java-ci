@@ -15,7 +15,7 @@ import org.json.*;
 
 //Import statements for Notify function
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
+//import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
