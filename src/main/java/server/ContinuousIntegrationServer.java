@@ -12,6 +12,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+import java.nio.file.*;
+
+import org.apache.commons.io.FileUtils;
+
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
@@ -153,6 +157,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
       System.out.println("Cloning repository "+ sshURL);
       String cloneStatus;
 
+      checkExistingClonedDirectory();
+
       try {
         Runtime.getRuntime().exec("git clone " + sshURL + " ./cloned-repo");
         cloneStatus = "Cloning OK";
@@ -162,6 +168,27 @@ public class ContinuousIntegrationServer extends AbstractHandler
       }
 
       return cloneStatus;
+    }
+
+    /**
+     * Checks if the ./cloned-repo directory already exist and if so
+     * it deletes this directory.
+     */
+    private void checkExistingClonedDirectory() {      
+      if(Files.exists(Paths.get("./cloned-repo"))) {
+        System.out.println("Directory exists!");
+        
+        try {
+          // directory path
+          File file  = new File("./cloned-repo");
+      
+          // delete directory
+          FileUtils.deleteDirectory(file);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+      } 
     }
 
     public String buildAndTest(String path){
