@@ -154,6 +154,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
      * @return status of of how the cloning went
      */
     public String cloneRepo(String sshURL){
+
         System.out.println("Cloning repository "+ sshURL);
         String cloneStatus;
 
@@ -171,10 +172,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
 
+
     /**
      * Checks if the ./cloned-repo directory already exist and if so
      * it deletes this directory.
      */
+
     private void checkExistingClonedDirectory() {
         if(Files.exists(Paths.get("./cloned-repo"))) {
             System.out.println("Directory exists!");
@@ -227,6 +230,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.print("Could not build.");
         }
         return buildStatus;
+
     }
 
     public String notify(String status){
