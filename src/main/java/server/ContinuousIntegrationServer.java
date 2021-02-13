@@ -129,19 +129,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public String getRepoURL(JSONObject json){
-      //gets the URL for repository to be cloned
+        //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
         //this extracts the branch in which the event occurred as lastOne
-      //  String refs = json.get("ref").toString();
-
-        /*String[] sss = refs.split("/");
-        String lastOne = sss[sss.length - 1];
+        String ref = json.get("ref").toString();
+        String[] splitref = ref.split("/");
+        String branch = splitref[splitref.length - 1];
         //this extracts the url of the repository where the event occurred as git_url
         String git_url = json.getJSONObject("repository").get("git_url").toString();
-        */
-        String git_url = "dummy url";
-        return git_url;
+        String git_url_fixed = git_url.replaceFirst("git", "https");
+        String full_url;
+        full_url = branch + " " + git_url_fixed;
+        return full_url;
     }
 
     /**
