@@ -12,17 +12,21 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+import java.nio.file.*;
+
+import org.apache.commons.io.FileUtils;
+
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
-*/
+ */
 public class ContinuousIntegrationServer extends AbstractHandler
 {
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
                        HttpServletResponse response)
-        throws IOException, ServletException
+            throws IOException, ServletException
     {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -33,37 +37,37 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String who = request.getHeader("user-agent");
 
         if(who.contains("GitHub-Hookshot")) {
-          String what = request.getHeader("X-GitHub-Event");
-          if(what.contains("push")) {
-            BufferedReader br = request.getReader();
-            //read the request
-            JSONObject JSON = getJSON(br);
+            String what = request.getHeader("X-GitHub-Event");
+            if(what.contains("push")) {
+                BufferedReader br = request.getReader();
+                //read the request
+                JSONObject JSON = getJSON(br);
 
-            //TODO: remove when JSON is working for everybody
-            JSON.put("name","foo");
-            System.out.println(JSON.get("name"));
-            System.out.println("Pusher: " + JSON.get("pusher"));
+                //TODO: remove when JSON is working for everybody
+                JSON.put("name","foo");
+                System.out.println(JSON.get("name"));
+                System.out.println("Pusher: " + JSON.get("pusher"));
 
-            //  String thing = getJSON(br);
-            String URL = "git@github.com:DD2480-Group-15/Assignment_2.git"; //getRepoURL(JSON);
-            String cloneOK = cloneRepo(URL);
+                //  String thing = getJSON(br);
+                String URL = getRepoURL(JSON);//"git@github.com:DD2480-Group-15/Assignment_2.git";
+                String cloneOK = cloneRepo(URL);
 
-            String buildOK = "build not done";
-            String notifyOK = "notification not sent";
+                String buildOK = "build not done";
+                String notifyOK = "notification not sent";
 
-            if(cloneOK.contains("Cloning OK")){
-              buildOK = buildAndTest("path");
-            }
+                if(cloneOK.contains("Cloning OK")){
+                    buildOK = buildAndTest("./cloned-repo");
+                }
 
-            if(buildOK.contains("Build OK")){
-              notifyOK = notify(buildOK);
-            }
+                if(buildOK.contains("Build OK")){
+                    notifyOK = notify(buildOK);
+                }
 
-            System.out.println("Request handled");
+                System.out.println("Request handled");
 
-            if(notifyOK.contains("Notification sent successfully")){
-              System.out.println(notifyOK);
-            }
+                if(notifyOK.contains("Notification sent successfully")){
+                    System.out.println(notifyOK);
+                }
 
         /*
         //OLD CODE THAT NEEDS TO BE INTEGRATED
@@ -101,8 +105,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
                   response.getWriter().println(line);
               }
           } */
+            }
         }
-      }
     }
 
     public int dummyFunction() {
@@ -112,8 +116,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public JSONObject getJSON(BufferedReader br) throws IOException {
-      //reads the request and converts it to a JSON object
-      //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
+        //reads the request and converts it to a JSON object
+        //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
         String str;
         StringBuilder wholeStr = new StringBuilder();
         while ((str = br.readLine()) != null) {
@@ -122,7 +126,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         br.close();
 
         String ss = wholeStr.toString();
-        
+
         //System.out.println(ss);
 
         return new JSONObject(ss);
@@ -150,32 +154,86 @@ public class ContinuousIntegrationServer extends AbstractHandler
      * @return status of of how the cloning went
      */
     public String cloneRepo(String sshURL){
-      System.out.println("Cloning repository "+ sshURL);
-      String cloneStatus;
+        System.out.println("Cloning repository "+ sshURL);
+        String cloneStatus;
 
-      try {
-        Runtime.getRuntime().exec("git clone " + sshURL + " ./cloned-repo");
-        cloneStatus = "Cloning OK";
-      } catch (IOException e) {
-        System.out.print("Could not clone repo.");
-        cloneStatus = "Cloning Failed";
-      }
+        try {
+            System.out.println(sshURL);
+            Process P1=Runtime.getRuntime().exec("git clone -b " + sshURL + " ./cloned-repo");
+            P1.waitFor();
+            cloneStatus = "Cloning OK";
+        } catch (IOException | InterruptedException e) {
+            System.out.print("Could not clone repo.");
+            cloneStatus = "Cloning Failed";
+        }
 
-      return cloneStatus;
+        return cloneStatus;
     }
 
-    public String buildAndTest(String path){
-      //builds the specified repo path using Maven and returns the status of the build
-      System.out.println("Running mvn package");
-      String buildStatus = "Build and test ok";
-      return buildStatus;
+
+    /**
+     * Checks if the ./cloned-repo directory already exist and if so
+     * it deletes this directory.
+     */
+    private void checkExistingClonedDirectory() {
+        if(Files.exists(Paths.get("./cloned-repo"))) {
+            System.out.println("Directory exists!");
+
+            try {
+                // directory path
+                File file  = new File("./cloned-repo");
+
+                // delete directory
+                FileUtils.deleteDirectory(file);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    /**
+     * Build and test ./cloned-repo directory
+     * if BUILD SUCCESS, deletes this directory.
+     */
+    public String buildAndTest(String path) {
+        //builds the specified repo path using Maven and returns the status of the build
+        System.out.println("Running mvn package");
+        File file=new File(path);
+        String buildStatus = "Build and test Failed";
+        try {
+            ProcessBuilder p1 = new ProcessBuilder(new String[]{"mvn","package"});
+            p1.redirectErrorStream(true);
+            p1.directory(file);
+            Process p = p1.start();
+            p.waitFor();
+            InputStream fis = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader fg = new BufferedReader(isr);
+            String line = null;
+            while ((line = fg.readLine()) != null) {
+                System.out.println(line);
+                String temp=line;
+                if((temp.contains("BUILD"))&&(temp.contains("SUCCESS")))
+                {
+                    buildStatus="Build OK";
+                }
+            }
+            // Delete the repository.
+            if(file.exists())
+            {
+                Process pp=Runtime.getRuntime().exec("rm -rf cloned-repo");
+            }
+        } catch (IOException | InterruptedException e) {
+            System.out.print("Could not build.");
+        }
+        return buildStatus;
     }
 
     public String notify(String status){
-      //sends notification of the build to the webhook
-      System.out.println("Notifying GitHub of build status");
-      String notificationStatus = "Notification sent successfully";
-      return notificationStatus;
+        //sends notification of the build to the webhook
+        System.out.println("Notifying GitHub of build status");
+        String notificationStatus = "Notification sent successfully";
+        return notificationStatus;
     }
 
     // public void write_payload_to_json(JSONObject input, String file_name) {
