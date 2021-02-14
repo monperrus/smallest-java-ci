@@ -231,7 +231,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     public String notify(String status){
       //sends notification of the build to the webhook
-      String webHook = "www.github.com";
+      String webHook = "http://8929b010.ngrok.io";
       CloseableHttpClient httpClient  = HttpClients.createDefault();;
       HttpPost post = new HttpPost(webHook);
       
