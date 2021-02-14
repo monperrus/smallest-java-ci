@@ -13,16 +13,39 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+import java.nio.file.*;
+
+import org.apache.commons.io.FileUtils;
+
 //Import statements for Notify function
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+
+
+
+import java.io.IOException;
 
 
 
@@ -59,7 +82,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println("Pusher: " + JSON.get("pusher"));
 
             //  String thing = getJSON(br);
-            String URL = "blaj"; //getRepoURL(JSON);
+            String URL = "git@github.com:DD2480-Group-15/Assignment_2.git"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
 
             String buildOK = "build not done";
@@ -103,7 +126,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
               //this clones the specified branch of the specified repository to the folder specified in folder_path
               String folder_path = " C:\\Users\\Kalle\\git\\cloneplace";
               Process p = Runtime.getRuntime().exec("git clone -b" + " " + lastOne + " " + git_url_fixed + folder_path);
-
               //this I don't quite know what it does
               InputStream fis = p.getInputStream();
               InputStreamReader isr = new InputStreamReader(fis);
@@ -143,26 +165,62 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public String getRepoURL(JSONObject json){
-      //gets the URL for repository to be cloned
+        //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
         //this extracts the branch in which the event occurred as lastOne
-      //  String refs = json.get("ref").toString();
-
-        /*String[] sss = refs.split("/");
-        String lastOne = sss[sss.length - 1];
+        String ref = json.get("ref").toString();
+        String[] splitref = ref.split("/");
+        String branch = splitref[splitref.length - 1];
         //this extracts the url of the repository where the event occurred as git_url
         String git_url = json.getJSONObject("repository").get("git_url").toString();
-        */
-        String git_url = "dummy url";
-        return git_url;
+        String git_url_fixed = git_url.replaceFirst("git", "https");
+        String full_url;
+        full_url = branch + " " + git_url_fixed;
+        return full_url;
     }
 
-    public String cloneRepo(String url){
-      //clones the repository, returns status of how it went
-      System.out.println("Cloning repository "+ url);
-      String cloneStatus = "Cloning OK";
+    /**
+     * Clones a repo into the directory ./cloned-repo
+     * @param sshURL the ssh url of the repo
+     * @return status of of how the cloning went
+     */
+    public String cloneRepo(String sshURL){
+      System.out.println("Cloning repository "+ sshURL);
+      String cloneStatus;
+
+      checkExistingClonedDirectory();
+
+      try {
+        Runtime.getRuntime().exec("git clone " + sshURL + " ./cloned-repo");
+        cloneStatus = "Cloning OK";
+      } catch (IOException e) {
+        System.out.print("Could not clone repo.");
+        cloneStatus = "Cloning Failed";
+      }
+
       return cloneStatus;
+    }
+
+    /**
+     * Checks if the ./cloned-repo directory already exist and if so
+     * it deletes this directory.
+     */
+    private void checkExistingClonedDirectory() {      
+      if(Files.exists(Paths.get("./cloned-repo"))) {
+        System.out.println("Directory exists!");
+        
+        try {
+          // directory path
+          File file  = new File("./cloned-repo");
+      
+          // delete directory
+          FileUtils.deleteDirectory(file);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+      } 
     }
 
     public String buildAndTest(String path){
@@ -174,20 +232,25 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     public String notify(String status){
       //sends notification of the build to the webhook
-      String git_url = "www.github.com";
-      HttpClient client = HttpClientBuilder.create().build();
-      HttpPost post = new HttpPost(git_url);
-      post.setHeader("Content-type","application/json");
-      post.setHeader("user-agent","Github-Hookshot");
-      post.setHeader("X-Github-Event", "push");
+      String webHook = "www.github.com";
+      CloseableHttpClient httpClient  = HttpClients.createDefault();;
+      HttpPost post = new HttpPost(webHook);
       
       try{
-        post.setEntity(new StringEntity("Someone has made a push!"));
-        HttpResponse res = client.execute(post);
+        ObjectMapper objectMap = new ObjectMapper();
+        String json = objectMap.writeValueAsString(status);
+      
+        StringEntity ent = new StringEntity(json);
+        httpPost.setEntity(entity);
+        httpPost.setHeader("Accept", "application/json");
+        httpPost.setHeader("Content-type", "application/json");
 
-        System.out.println(EntityUtils.toString(res.getEntity()));
+        httpClient.execute(post);
+        httpClient.close();
+
         System.out.println("Notifying GitHub of build status");
         String notificationStatus = "Notification sent successfully";
+        
         return notificationStatus;
       }catch(IOException e){
         e.printStackTrace();
