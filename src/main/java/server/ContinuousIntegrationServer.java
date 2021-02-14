@@ -241,9 +241,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
         String json = objectMap.writeValueAsString(status);
       
         StringEntity ent = new StringEntity(json);
-        httpPost.setEntity(entity);
-        httpPost.setHeader("Accept", "application/json");
-        httpPost.setHeader("Content-type", "application/json");
+        post.setEntity(ent);
+        post.setHeader("Accept", "application/json");
+        post.setHeader("Content-type", "application/json");
 
         httpClient.execute(post);
         httpClient.close();
