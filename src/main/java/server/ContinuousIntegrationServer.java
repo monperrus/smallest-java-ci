@@ -44,6 +44,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println(JSON.get("name"));
             System.out.println("Pusher: " + JSON.get("pusher"));
 
+
             //  String thing = getJSON(br);
             String URL = "git@github.com:DD2480-Group-15/Assignment_2.git"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
@@ -105,6 +106,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
       }
     }
 
+
     public int dummyFunction() {
         //dummy function to start testing
         System.out.println("Calling dummyFunction");
@@ -119,11 +121,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
         while ((str = br.readLine()) != null) {
             wholeStr.append(str);
         }
-        br.close();
-
-        String ss = wholeStr.toString();
         
-        //System.out.println(ss);
+        br.close();
 
         return new JSONObject(ss);
     }
@@ -163,6 +162,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
       return cloneStatus;
     }
+
 
     public String buildAndTest(String path){
       //builds the specified repo path using Maven and returns the status of the build
