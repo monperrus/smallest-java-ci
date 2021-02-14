@@ -13,6 +13,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+import java.nio.file.*;
+
+import org.apache.commons.io.FileUtils;
+
 //Import statements for Notify function
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -33,8 +37,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
-
-//
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -43,7 +45,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 
 import java.io.IOException;
-
 
 
 
@@ -80,7 +81,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             System.out.println("Pusher: " + JSON.get("pusher"));
 
             //  String thing = getJSON(br);
-            String URL = "blaj"; //getRepoURL(JSON);
+            String URL = "git@github.com:DD2480-Group-15/Assignment_2.git"; //getRepoURL(JSON);
             String cloneOK = cloneRepo(URL);
 
             String buildOK = "build not done";
@@ -164,26 +165,62 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public String getRepoURL(JSONObject json){
-      //gets the URL for repository to be cloned
+        //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
         //this extracts the branch in which the event occurred as lastOne
-      //  String refs = json.get("ref").toString();
-
-        /*String[] sss = refs.split("/");
-        String lastOne = sss[sss.length - 1];
+        String ref = json.get("ref").toString();
+        String[] splitref = ref.split("/");
+        String branch = splitref[splitref.length - 1];
         //this extracts the url of the repository where the event occurred as git_url
         String git_url = json.getJSONObject("repository").get("git_url").toString();
-        */
-        String git_url = "dummy url";
-        return git_url;
+        String git_url_fixed = git_url.replaceFirst("git", "https");
+        String full_url;
+        full_url = branch + " " + git_url_fixed;
+        return full_url;
     }
 
-    public String cloneRepo(String url){
-      //clones the repository, returns status of how it went
-      System.out.println("Cloning repository "+ url);
-      String cloneStatus = "Cloning OK";
+    /**
+     * Clones a repo into the directory ./cloned-repo
+     * @param sshURL the ssh url of the repo
+     * @return status of of how the cloning went
+     */
+    public String cloneRepo(String sshURL){
+      System.out.println("Cloning repository "+ sshURL);
+      String cloneStatus;
+
+      checkExistingClonedDirectory();
+
+      try {
+        Runtime.getRuntime().exec("git clone " + sshURL + " ./cloned-repo");
+        cloneStatus = "Cloning OK";
+      } catch (IOException e) {
+        System.out.print("Could not clone repo.");
+        cloneStatus = "Cloning Failed";
+      }
+
       return cloneStatus;
+    }
+
+    /**
+     * Checks if the ./cloned-repo directory already exist and if so
+     * it deletes this directory.
+     */
+    private void checkExistingClonedDirectory() {      
+      if(Files.exists(Paths.get("./cloned-repo"))) {
+        System.out.println("Directory exists!");
+        
+        try {
+          // directory path
+          File file  = new File("./cloned-repo");
+      
+          // delete directory
+          FileUtils.deleteDirectory(file);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+      } 
     }
 
     public String buildAndTest(String path){
