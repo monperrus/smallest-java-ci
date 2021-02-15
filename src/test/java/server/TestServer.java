@@ -51,7 +51,7 @@ public class TestServer {
     //Test False
     JSONObject json_false = new jsonObject();
     JSONObject git_url_1 = new JSONObject();
-    git_url_1.put("git_url","/tree/issue/22);
+    git_url_1.put("git_url","/tree/issue/22");
     json_false("repository", git_url_1);
     json_false("ref","https://github.com/DD2480-Group-15/ci-server");
     String false_return = "tree/issue/22" +""+"git://github.com/DD2480-Group-15/ci-server";
