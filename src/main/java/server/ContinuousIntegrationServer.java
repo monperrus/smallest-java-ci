@@ -44,6 +44,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 
+//Another implementation of the Notifify Function 
+import javax.net.ssl.HttpsURLConnection;
+
+
 
 
 
@@ -226,6 +230,20 @@ public class ContinuousIntegrationServer extends AbstractHandler
       System.out.println("Running mvn package");
       String buildStatus = "Build and test ok";
       return buildStatus;
+    }
+
+    public String notify_2(String status, URL url)throws IOException{
+    HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+    connect.setRequestMethod("POST");
+    connect.setRequestProperty("Content-type", "application/json");
+    connect.setRequestProperty("Status", "Status: " + status);
+    connect.setDoOutPut(true);
+    
+    try(OutputStream os != connect.getOutPutStream()){
+    byte[] input = jsonInputString.getBytes("utf-8");
+    os.write(input,0,input.length);
+    }
+    
     }
 
     public String notify(String status){
