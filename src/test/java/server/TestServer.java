@@ -22,7 +22,7 @@ public class TestServer {
         //Test That it correctly converts to JSON
         String test_true = "[{\"test\":\"working\"}]";
         Reader inputString = new StringReader(test_true);
-        JSONObject json_true = new JSONObject();
+        JsonObject json_true = new JSONObject();
         BufferedReader reader = new BufferedReader(inputString);
         json_true.put("test","working");
         //assertEquals(getJSON(reader),json_true);
@@ -31,7 +31,7 @@ public class TestServer {
         //Test That it giving the false 
         String test_false = "False : Not working";
         Reader inputString_2 = new StringReader(test_false);
-        JSONObject json_false = new JSONObject();
+        JsonObject json_false = new JSONObject();
         BufferedReader reader_1 = new BufferedReader(inputString_2);
         json_true.put("false","Not working");
         //assertNotEquals(getJSON(reader_1),json_true);
