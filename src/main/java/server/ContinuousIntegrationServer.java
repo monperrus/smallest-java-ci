@@ -66,7 +66,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public int dummyFunction() {
         //dummy function to start testing
         System.out.println("Calling dummyFunction");
-        return 3;
+        return 1;
     }
 
     /**
