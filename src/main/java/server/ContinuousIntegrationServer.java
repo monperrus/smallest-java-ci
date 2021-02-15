@@ -12,12 +12,21 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
  */
 public class ContinuousIntegrationServer extends AbstractHandler
 {
+    private static final String token = "8513a3a0f7660443ef05363b82722344b3a9fc64";
+
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
@@ -40,7 +49,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 JSONObject JSON = getJSON(br);
 
                 String URL = getRepoURL(JSON);
-                
+                String[] params = getParams(JSON);
                 String cloneOK = cloneRepo(URL);
 
                 String buildOK = "build not done";
@@ -51,7 +60,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 }
 
                 if(buildOK.contains("Build OK")){
-                    notifyOK = notify(buildOK);
+                    notifyOK = set_commit_status(token, params[0], params[1], params[2], 2, "Build OK");
                 }
 
                 System.out.println("Request handled");
@@ -114,6 +123,11 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return full_url;
     }
 
+    public String[] getParams(JSONObject json){
+        String[] everything;
+        everything = new String[]{"163e1c6a7fca935ecec0fcf559f7832e095b4055", "DD2480-Group-15", "Assignment_2"};
+        return everything;
+    }
     /**
      * Clones a repo into the directory ./cloned-repo
      * @param httpURL the http url of the repo
@@ -180,12 +194,42 @@ public class ContinuousIntegrationServer extends AbstractHandler
     //Sends a notification to the webhook
     //And tell User dymnaically that Repo has
     //Been successfully build
-    public String notify(String status){
-        //sends notification of the build to the webhook
-        System.out.println("Notifying GitHub of build status");
-        String notificationStatus = "Notification sent successfully";
-        return notificationStatus;
+
+    public String set_commit_status(String token, String commitSha, String owner, String repo, int state,
+                                           String message) {
+        //this function sets the status of a commit to one of the four possible values,
+        // with the provided context and message
+        String[] statelist =  {"error", "pending", "success", "failure"};
+        try {
+            //this opens sends a http post request to github given the above parameters
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost("https://api.github.com/repos/"+owner+"/"+repo+"/statuses/"+commitSha);
+            httpPost.setHeader("Authorization", "token " + token);
+            httpPost.setHeader("Content-type","application/json");
+            httpPost.setHeader("Accept","application/vnd.github.v3+json");
+            StringEntity params = new StringEntity(
+                    "{\"state\": \""+statelist[state]
+                            +"\", \"description\": \""+message
+                            +"\", \"context\": \"Continuous Integration Server\"}", ContentType.APPLICATION_JSON);
+            httpPost.setEntity(params);
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+            int responseCode = response.getStatusLine().getStatusCode();
+            httpclient.close();
+            response.close();
+
+            //this returns a string based on the message recieved back from github
+            if(responseCode == 201){
+                return "Successful: "+ responseCode;
+            }
+            else {
+                return "Unsuccessful: "+ responseCode;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Unsuccessful: Exception";
+        }
     }
+
 
     // public void write_payload_to_json(JSONObject input, String file_name) {
     //     //this function writes a JSONObject to a specified json-file
