@@ -22,7 +22,8 @@ public class TestServer {
         //Test That it correctly converts to JSON
         String test_true = "[{\"test\":\"working\"}]";
         Reader inputString = new StringReader(test_true);
-        JsonObject json_true = new JSONObject();
+        JSONObject json_true = new JSONObject();
+
         BufferedReader reader = new BufferedReader(inputString);
         json_true.put("test","working");
         //assertEquals(getJSON(reader),json_true);
