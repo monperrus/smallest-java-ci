@@ -39,6 +39,14 @@
     </dependency>
 
 
+  <!-- https://mvnrepository.com/artifact/org.dmfs/httpurlconnection-executor -->
+<dependency>
+    <groupId>org.dmfs</groupId>
+    <artifactId>httpurlconnection-executor</artifactId>
+    <version>0.8</version>
+</dependency>    
+        
+        
         
         <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
         <dependency>
