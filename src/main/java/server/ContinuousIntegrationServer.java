@@ -66,7 +66,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     public int dummyFunction() {
         //dummy function to start testing
         System.out.println("Calling dummyFunction");
-        return 1;
+        return 3;
     }
 
     /**
@@ -177,7 +177,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return buildStatus;
 
     }
-
+    //Sends a notification to the webhook
+    //And tell User dymnaically that Repo has
+    //Been successfully build
     public String notify(String status){
         //sends notification of the build to the webhook
         System.out.println("Notifying GitHub of build status");
