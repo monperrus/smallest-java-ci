@@ -12,10 +12,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import org.json.*;
 
-import java.nio.file.*;
-
-import org.apache.commons.io.FileUtils;
-
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
@@ -43,8 +39,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 //read the request
                 JSONObject JSON = getJSON(br);
 
-                //  String thing = getJSON(br);
-                String URL = getRepoURL(JSON);//"git@github.com:DD2480-Group-15/Assignment_2.git";
+                String URL = getRepoURL(JSON);
+                
                 String cloneOK = cloneRepo(URL);
 
                 String buildOK = "build not done";
@@ -73,6 +69,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return 1;
     }
 
+    /**
+     * Creates a JSON object from the body of a http POST request from a GitHub webhook. 
+     * @param br contains the body of a http POST request
+     * @return A JSON object containing the parameters from a GitHub webhook
+     * @throws IOException
+     */
     public JSONObject getJSON(BufferedReader br) throws IOException {
         //reads the request and converts it to a JSON object
         //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
@@ -90,6 +92,12 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return new JSONObject(ss);
     }
 
+    /**
+     * Gets the GitHub repo url and recently pushed branch from the input json
+     * and combine these to form a compatible string to use with the 'git clone' command. 
+     * @param json A JSON object containing the parameters from a GitHub webhook
+     * @return A string with the recently pushed branch and the GitHub repo url. 
+     */
     public String getRepoURL(JSONObject json){
         //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
@@ -108,17 +116,17 @@ public class ContinuousIntegrationServer extends AbstractHandler
 
     /**
      * Clones a repo into the directory ./cloned-repo
-     * @param sshURL the ssh url of the repo
+     * @param httpURL the http url of the repo
      * @return status of of how the cloning went
      */
-    public String cloneRepo(String sshURL){
+    public String cloneRepo(String httpURL){
 
-        System.out.println("Cloning repository "+ sshURL);
+        System.out.println("Cloning repository "+ httpURL);
         String cloneStatus;
 
         try {
-            System.out.println(sshURL);
-            Process P1=Runtime.getRuntime().exec("git clone -b " + sshURL + " ./cloned-repo");
+            System.out.println(httpURL);
+            Process P1=Runtime.getRuntime().exec("git clone -b " + httpURL + " ./cloned-repo");
             P1.waitFor();
             cloneStatus = "Cloning OK";
         } catch (IOException | InterruptedException e) {
@@ -132,6 +140,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
     /**
      * Build and test ./cloned-repo directory
      * if BUILD SUCCESS, deletes this directory.
+     * @param path The path to the github repo that should be built and tested
+     * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed" 
      */
     public String buildAndTest(String path) {
         //builds the specified repo path using Maven and returns the status of the build
@@ -185,7 +195,11 @@ public class ContinuousIntegrationServer extends AbstractHandler
     //     }
     // }
 
-    // used to start the CI server in command line
+    /** 
+     * Main method. 
+     * Used to start the CI server in command line.
+     * @param args Not used
+     */
     public static void main(String[] args) throws Exception
     {
         Server server = new Server(8080);
