@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 
 //Import statements for Notify function
 //Maybe Remove some imports?
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -236,8 +235,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
       HttpPost post = new HttpPost(webHook);
       
       try{
-        ObjectMapper objectMap = new ObjectMapper();
-        String json = objectMap.writeValueAsString(status);
+        String json = status;
       
         StringEntity ent = new StringEntity(json);
         post.setEntity(ent);
