@@ -32,7 +32,7 @@ public class TestServer {
         //Test That it giving the false 
         String test_false = "False : Not working";
         Reader inputString_2 = new StringReader(test_false);
-        JsonObject json_false = new JSONObject();
+        JSONObject json_false = new JSONObject();
         BufferedReader reader_1 = new BufferedReader(inputString_2);
         json_true.put("false","Not working");
         //assertNotEquals(getJSON(reader_1),json_true);
@@ -42,8 +42,8 @@ public class TestServer {
     @Test
     public void test_getRepoURL(){
     //Test True    
-    JsonObject json_true = new jsonObject();
-    JsonObject git_url = new JSONObject();
+    JSONObject json_true = new JSONObject();
+    JSONObject git_url = new JSONObject();
     git_url.put("git_url","https://github.com/DD2480-Group-15/ci-server");
     json_true("repository", git_url);
     json_true("ref","/tree/issue/22");
@@ -51,11 +51,11 @@ public class TestServer {
     assertEquals(getRepoURL(json_true), true_return);
     
     //Test False
-    JsonObject json_false = new jsonObject();
-    JsonObject git_url_1 = new JSONObject();
+    JSONObject json_false = new JSONObject();
+    JSONObject git_url_1 = new JSONObject();
     git_url_1.put("git_url","/tree/issue/22");
-    json_false("repository", git_url_1);
-    json_false("ref","https://github.com/DD2480-Group-15/ci-server");
+    json_false.put("repository", git_url_1);
+    json_false.put("ref","https://github.com/DD2480-Group-15/ci-server");
     String false_return = "tree/issue/22" +""+"git://github.com/DD2480-Group-15/ci-server";
     assertNotEquals(getRepoURL(json_false), false_return); 
     }
