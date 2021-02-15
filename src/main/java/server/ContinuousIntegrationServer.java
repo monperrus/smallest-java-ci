@@ -113,16 +113,19 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return 1;
     }
 
-    public JSONObject getJSON(BufferedReader br) throws IOException {
-      //reads the request and converts it to a JSON object
-      //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
+   public JSONObject getJSON(BufferedReader br) throws IOException {
+        //reads the request and converts it to a JSON object
+        //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
         String str;
         StringBuilder wholeStr = new StringBuilder();
         while ((str = br.readLine()) != null) {
             wholeStr.append(str);
         }
-        
         br.close();
+
+        String ss = wholeStr.toString();
+
+        //System.out.println(ss);
 
         return new JSONObject(ss);
     }
