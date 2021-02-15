@@ -239,9 +239,9 @@ public class ContinuousIntegrationServer extends AbstractHandler
     connect.setRequestProperty("Status", "Status: " + status);
     connect.setDoOutPut(true);
     
-    try(OutputStream os != connect.getOutPutStream()){
+    try(OutputStream os = connect.getOutputStream()) {
     byte[] input = jsonInputString.getBytes("utf-8");
-    os.write(input,0,input.length);
+    os.write(input, 0, input.length);			
     }
     
     }
