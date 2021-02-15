@@ -233,7 +233,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     }
 
     public String notify_2(String status, URL url)throws IOException{
-    HttpURLConnection connect = (HttpURLConnection) url.openConnection();
+    HttpsURLConnection connect = (HttpsURLConnection) url.openConnection();
     connect.setRequestMethod("POST");
     connect.setRequestProperty("Content-type", "application/json");
     connect.setRequestProperty("Status", "Status: " + status);
