@@ -15,7 +15,6 @@ public class TestServer {
     }
 
     @Test
-    @DisplayName("Test the getJSON")
     public void TestGetJson(){
         //Test That it correctly converts to JSON
         String test_true = "[{\"test\":\"working\"}]";
@@ -37,7 +36,6 @@ public class TestServer {
 
 
     @Test
-    @DisplayName("Test the getRepoURL")
     public void test_getRepoURL(){
     //Test True    
     JSONObject json_true = new jsonObject();
