@@ -232,19 +232,20 @@ public class ContinuousIntegrationServer extends AbstractHandler
       return buildStatus;
     }
 
-    public String notify_2(String status, URL url)throws IOException{
-    HttpsURLConnection connect = (HttpsURLConnection) url.openConnection();
-    connect.setRequestMethod("POST");
-    connect.setRequestProperty("Content-type", "application/json");
-    connect.setRequestProperty("Status", "Status: " + status);
-    connect.setDoOutPut(true);
+    //public String notify_2(String status, URL url)throws IOException{
+    //HttpsURLConnection connect = (HttpsURLConnection) url.openConnection();
+    //connect.setRequestMethod("POST");
+    //connect.setRequestProperty("Content-type", "application/json");
+    //connect.setRequestProperty("Status", "Status: " + status);
+    //connect.setDoOutPut(true);
+    //connect.setDoOutput(true);
     
-    try(OutputStream os = connect.getOutputStream()) {
-    byte[] input = jsonInputString.getBytes("utf-8");
-    os.write(input, 0, input.length);			
-    }
+    //try(OutputStream os = connect.getOutputStream()) {
+    //byte[] input = jsonInputString.getBytes("utf-8");
+    //os.write(input, 0, input.length);			
+   // }
     
-    }
+   // }
 
     public String notify(String status){
       //sends notification of the build to the webhook
