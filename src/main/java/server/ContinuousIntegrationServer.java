@@ -25,7 +25,7 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class ContinuousIntegrationServer extends AbstractHandler
 {
-    private static final String token = "8513a3a0f7660443ef05363b82722344b3a9fc64";
+    private static final String token = "1d9577f8daa236ca44b83066563c6ccf9e374927";
 
     public void handle(String target,
                        Request baseRequest,
@@ -49,7 +49,8 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 JSONObject JSON = getJSON(br);
 
                 String URL = getRepoURL(JSON);
-                String[] params = getParams(JSON);
+                String status_url = getStatusUrl(JSON);
+
                 String cloneOK = cloneRepo(URL);
 
                 String buildOK = "build not done";
@@ -60,7 +61,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 }
 
                 if(buildOK.contains("Build OK")){
-                    notifyOK = set_commit_status(token, params[0], params[1], params[2], 2, "Build OK");
+                    notifyOK = set_commit_status(token, status_url, 2, "Build OK");
                 }
 
                 System.out.println("Request handled");
@@ -123,10 +124,17 @@ public class ContinuousIntegrationServer extends AbstractHandler
         return full_url;
     }
 
-    public String[] getParams(JSONObject json){
-        String[] everything;
-        everything = new String[]{"163e1c6a7fca935ecec0fcf559f7832e095b4055", "DD2480-Group-15", "Assignment_2"};
-        return everything;
+    public String getStatusUrl(JSONObject json){
+        //this gets the complete url to the status of the latest commit in a given push from
+        //a json object
+        String complete_url;
+
+        String commit_sha = json.getString("after");
+        String url = json.getJSONObject("repository").getString("statuses_url");
+        String replace = "{sha}";
+        complete_url = url.replace(replace, commit_sha);
+        System.out.println(complete_url);
+        return complete_url;
     }
     /**
      * Clones a repo into the directory ./cloned-repo
@@ -195,7 +203,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
     //And tell User dymnaically that Repo has
     //Been successfully build
 
-    public String set_commit_status(String token, String commitSha, String owner, String repo, int state,
+    public String set_commit_status(String token, String status_url, int state,
                                            String message) {
         //this function sets the status of a commit to one of the four possible values,
         // with the provided context and message
@@ -203,7 +211,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
         try {
             //this opens sends a http post request to github given the above parameters
             CloseableHttpClient httpclient = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost("https://api.github.com/repos/"+owner+"/"+repo+"/statuses/"+commitSha);
+            HttpPost httpPost = new HttpPost(status_url);
             httpPost.setHeader("Authorization", "token " + token);
             httpPost.setHeader("Content-type","application/json");
             httpPost.setHeader("Accept","application/vnd.github.v3+json");
@@ -216,7 +224,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
             int responseCode = response.getStatusLine().getStatusCode();
             httpclient.close();
             response.close();
-
+            System.out.println(responseCode);
             //this returns a string based on the message recieved back from github
             if(responseCode == 201){
                 return "Successful: "+ responseCode;
