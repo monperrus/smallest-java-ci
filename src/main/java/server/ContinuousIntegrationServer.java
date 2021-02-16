@@ -57,7 +57,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
                 String notifyOK = "notification not sent";
 
                 if(cloneOK.contains("Cloning OK")){
-                    buildOK = buildAndTest("./cloned-repo");
+                    buildOK = buildAndTest("./cloned-repo",status_url);
                 }
 
                 if(buildOK.contains("Build OK")){
@@ -165,7 +165,7 @@ public class ContinuousIntegrationServer extends AbstractHandler
      * @param path The path to the github repo that should be built and tested
      * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed" 
      */
-    public String buildAndTest(String path) {
+    public String buildAndTest(String path,String url) {
         //builds the specified repo path using Maven and returns the status of the build
         System.out.println("Running mvn package");
         File file=new File(path);
@@ -175,17 +175,23 @@ public class ContinuousIntegrationServer extends AbstractHandler
             p1.redirectErrorStream(true);
             p1.directory(file);
             Process p = p1.start();
+            set_commit_status(token, url, 1, "Build pending");
             p.waitFor();
             InputStream fis = p.getInputStream();
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader fg = new BufferedReader(isr);
             String line = null;
+            int tag=0;
             while ((line = fg.readLine()) != null) {
+                {
+                    buildStatus="Build OK";
+                }
                 System.out.println(line);
                 String temp=line;
                 if((temp.contains("BUILD"))&&(temp.contains("SUCCESS")))
                 {
                     buildStatus="Build OK";
+
                 }
             }
             // Delete the repository.
