@@ -16,8 +16,19 @@ Then start the server on your local machine:
 ```
 java -jar target/gs-maven-0.1.0.jar
 ```
+## Using Ngrok to connect the server to GitHub
+The server can be made visible on the Internet by using [Ngrok](https://ngrok.com/). 
 
-The serverr is visible on the Internet by using [Ngrok](https://ngrok.com/). The public url can be found by running the following commnand in a second terminal window:
+### Download Ngrok
+First you need to download it:
+
+```
+curl -LO --tlsv1 https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+unzip ngrok-stable-linux-amd64.zip 
+```
+### Run Ngrok and connect to GitHub
+
+The public url can be found by running the following commnand in a separate terminal window to the one running the server (in the same folder as Ngrok was downloaded):
 ```
 # open a second terminal window
 # this gives you the public URL of your CI server to set in Github
