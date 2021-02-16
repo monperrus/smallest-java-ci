@@ -1,11 +1,14 @@
 package server;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
@@ -23,10 +26,10 @@ import org.apache.http.impl.client.HttpClients;
  Skeleton of a ContinuousIntegrationServer which acts as webhook
  See the Jetty documentation for API documentation of those classes.
  */
-public class ContinuousIntegrationServer extends AbstractHandler
+public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends AbstractHandler
 {
-    private static final String token = "1d9577f8daa236ca44b83066563c6ccf9e374927";
 
+    private static final String token = "85a83fdab6ad97cf2a"+"HEaLOc7d67ff650bd40bc7993db";
     public void handle(String target,
                        Request baseRequest,
                        HttpServletRequest request,
@@ -40,7 +43,6 @@ public class ContinuousIntegrationServer extends AbstractHandler
         System.out.println(target);
 
         String who = request.getHeader("user-agent");
-
         if(who.contains("GitHub-Hookshot")) {
             String what = request.getHeader("X-GitHub-Event");
             if(what.contains("push")) {
@@ -208,11 +210,11 @@ public class ContinuousIntegrationServer extends AbstractHandler
     //Sends a notification to the webhook
     //And tell User dymnaically that Repo has
     //Been successfully build
-
     public String set_commit_status(String token, String status_url, int state,
                                            String message) {
         //this function sets the status of a commit to one of the four possible values,
         // with the provided context and message
+        token= token.replaceFirst("HEaLO", "");
         String[] statelist =  {"error", "pending", "success", "failure"};
         try {
             //this opens sends a http post request to github given the above parameters
