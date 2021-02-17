@@ -28,7 +28,7 @@ public class TestServer {
         JSONObject json2 = help_getJSON("src/test/java/server/test3.json");
 
         assertEquals(json.isEmpty(), false);
-        assertEquals(json2.isEmpty() ,true);
+        assertEquals(json2.isEmpty(), true);
     }
 
 
@@ -55,10 +55,12 @@ public class TestServer {
 
     @Test
     public void test_getStatusUrl(){
+      //True case: An expected JSON file is inputed, should produce a url
         JSONObject json_true = help_getJSON("src/test/java/server/testdata_getstatusurl_T.json");
-        JSONObject json_false = help_getJSON("src/test/java/server/testdata_getstatusurl_F.json");
+        //JSONObject json_false = help_getJSON("src/test/java/server/testdata_getstatusurl_F.json");
 
-      //  String statusUrl_true = getStatusUrl(json_true);
+        String statusUrl_true = getStatusUrl(json_true);
+        assertEquals(statusUrl_true, "https://api.github.com/repos/gzh0528/ci-server/statuses/81527927fbc0945598f9c70f9e279eb6db7fed0e");
         //String statusUrl_false = getStatusUrl(json_false);
 
     }
