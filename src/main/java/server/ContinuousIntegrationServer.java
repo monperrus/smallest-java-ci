@@ -49,7 +49,12 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                 BufferedReader br = request.getReader();
                 //read the request
                 JSONObject JSON = getJSON(br);
-
+                //write test_file
+                try {
+                    JsonWrite(JSON);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 String URL = getRepoURL(JSON);
                 String status_url = getStatusUrl(JSON);
 
@@ -64,6 +69,8 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
 
                 if(buildOK.contains("Build OK")){
                     notifyOK = set_commit_status(token, status_url, 2, "Build OK");
+                } else {
+                    notifyOK = set_commit_status(token, status_url, 3, "Build Failed");
                 }
 
                 System.out.println("Request handled");
@@ -87,7 +94,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @return A JSON object containing the parameters from a GitHub webhook
      * @throws IOException
      */
-    public JSONObject getJSON(BufferedReader br) throws IOException {
+    public static JSONObject getJSON(BufferedReader br) throws IOException {
         //reads the request and converts it to a JSON object
         //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
         String str;
@@ -110,7 +117,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @param json A JSON object containing the parameters from a GitHub webhook
      * @return A string with the recently pushed branch and the GitHub repo url. 
      */
-    public String getRepoURL(JSONObject json){
+    public static String getRepoURL(JSONObject json){
         //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
@@ -126,7 +133,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         return full_url;
     }
 
-    public String getStatusUrl(JSONObject json){
+    public static String getStatusUrl(JSONObject json){
         //this gets the complete url to the status of the latest commit in a given push from
         //a json object
         String complete_url;
@@ -143,7 +150,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @param httpURL the http url of the repo
      * @return status of of how the cloning went
      */
-    public String cloneRepo(String httpURL){
+    public static String cloneRepo(String httpURL){
 
         System.out.println("Cloning repository "+ httpURL);
         String cloneStatus;
@@ -167,7 +174,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @param path The path to the github repo that should be built and tested
      * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed" 
      */
-    public String buildAndTest(String path,String url) {
+    public static String buildAndTest(String path,String url) {
         //builds the specified repo path using Maven and returns the status of the build
         System.out.println("Running mvn package");
         File file=new File(path);
@@ -210,7 +217,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
     //Sends a notification to the webhook
     //And tell User dymnaically that Repo has
     //Been successfully build
-    public String set_commit_status(String token, String status_url, int state,
+    public static String set_commit_status(String token, String status_url, int state,
                                            String message) {
         //this function sets the status of a commit to one of the four possible values,
         // with the provided context and message
@@ -246,16 +253,13 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         }
     }
 
-
-    // public void write_payload_to_json(JSONObject input, String file_name) {
-    //     //this function writes a JSONObject to a specified json-file
-    //     try (FileWriter file = new FileWriter(file_name)) {
-    //         com.alibaba.fastjson.JSONWriter WT = new JSONWriter(file);
-    //         WT.writeObject(input);
-    //     } catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
+    //for test
+    public static void JsonWrite(JSONObject obj) throws Exception{
+        OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("./test_file.json"),"UTF-8");
+        osw.write(obj.toString());
+        osw.flush();
+        osw.close();
+    }
 
     /** 
      * Main method. 

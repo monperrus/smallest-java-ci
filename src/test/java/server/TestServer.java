@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.*;
 import org.json.*;
-
+import server.ContinuousIntegrationServer.*;
 // Run Maven tests: mvn test
 
 public class TestServer {
