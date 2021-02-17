@@ -5,7 +5,7 @@ This is a simple server for Continuous Integration development. It is meant to b
 ## Contributions
 **Philip Andersson (CSCphilp):** Maven handling, JSON handling, bug fixes
 
-**Zehua Guo (gzh0528):** Cloning, building and testing the repository 
+**Zehua Guo (gzh0528):** Cloning, building and testing the repository, Build History
 
 **Jonatan Yao Håkansson (jonte450):** Testing,Notifify function helped together with Kalle
 
