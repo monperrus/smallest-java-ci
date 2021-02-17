@@ -3,6 +3,7 @@ package server;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static server.ContinuousIntegrationServer.getJSON;
 
 import java.io.*;
 import org.json.*;
@@ -18,24 +19,37 @@ public class TestServer {
     }
 
     @Test
-    public void TestGetJson(){
-        //Test That it correctly converts to JSON
-        String test_true = "[{\"test\":\"working\"}]";
-        Reader inputString = new StringReader(test_true);
-        JSONObject json_true = new JSONObject();
+    public void test_getJSON(){
+        BufferedReader inputString = null;
+        BufferedReader inputString2 = null;
 
-        BufferedReader reader = new BufferedReader(inputString);
-        json_true.put("test","working");
-        //assertEquals(getJSON(reader),json_true);
+        {
+            try {
+                inputString = new BufferedReader(new FileReader("src/test/java/server/test2.json"));
+                inputString2 = new BufferedReader(new FileReader("src/test/java/server/test3.json"));
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        JSONObject json = null;
+        JSONObject json2 = null;
+
+        {
+            try {
+                assert inputString != null;
+                assert inputString2 != null;
+                json = getJSON(inputString);
+                json2 = getJSON(inputString2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
 
-        //Test That it giving the false 
-        String test_false = "False : Not working";
-        Reader inputString_2 = new StringReader(test_false);
-        JSONObject json_false = new JSONObject();
-        BufferedReader reader_1 = new BufferedReader(inputString_2);
-        json_true.put("false","Not working");
-        //assertNotEquals(getJSON(reader_1),json_true);
+        assertEquals(json.isEmpty(), false);
+        assertEquals(json2.isEmpty() ,true);
     }
 
 
@@ -60,6 +74,20 @@ public class TestServer {
     //assertNotEquals(getRepoURL(json_false), false_return); 
     }
 
+    @Test
+    public void test_getStatusUrl(){
+
+    }
+
+   //@Test
+   //public void test(){
+
+   //}
+
+   //@Test
+   //public void test(){
+
+   //}
     
 
 
