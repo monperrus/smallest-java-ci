@@ -59,7 +59,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                 String notifyOK = "notification not sent";
 
                 if(cloneOK.contains("Cloning OK")){
-                    buildOK = buildAndTest("./cloned-repo",status_url);
+                    buildOK = buildAndTest("./cloned-repo", status_url);
                 }
 
                 if(buildOK.contains("Build OK")){
@@ -90,8 +90,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @throws IOException
      */
     public static JSONObject getJSON(BufferedReader br) throws IOException {
-        //reads the request and converts it to a JSON object
-        //when adding webhook in GitHub, you have to chose a payload of application/json. Otherwise, this function will not work.
         String str;
         StringBuilder wholeStr = new StringBuilder();
         while ((str = br.readLine()) != null) {
@@ -116,14 +114,13 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * @return A string with the recently pushed branch and the GitHub repo url.
      */
     public static String getRepoURL(JSONObject json){
-        //gets the URL for repository to be cloned
         System.out.println("Getting repository URL");
 
         //this extracts the branch in which the event occurred as lastOne
         String ref = json.get("ref").toString();
         String[] splitref = ref.split("/");
         String branch = splitref[splitref.length - 1];
-        //this extracts the url of the repository where the event occurred as git_url
+        //extracts the url of the repository where the event occurred as git_url
         String git_url = json.getJSONObject("repository").get("git_url").toString();
         String git_url_fixed = git_url.replaceFirst("git", "https");
         String full_url;
@@ -131,9 +128,12 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         return full_url;
     }
 
+    /**
+     * Gets url to the status of the latest commit in a given push
+     * @param json the JSON object of the commit
+     * @return url of the status
+     */
     public static String getStatusUrl(JSONObject json){
-        //this gets the complete url to the status of the latest commit in a given push from
-        //a json object
         String complete_url;
 
         String commit_sha = json.getString("after");
@@ -166,12 +166,13 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
     }
 
     /**
-     * Build and test ./cloned-repo directory
-     * if BUILD SUCCESS, deletes this directory.
-     * @param path The path to the github repo that should be built and tested
+     * Builds and tests a specified repository
+     * if BUILD SUCCESS, the directory is deleted
+     * @param path The path to the cloned repo that should be built and tested
+     * @param url Url to commit status
      * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed"
      */
-    public static String buildAndTest(String path,String url) {
+    public static String buildAndTest(String path, String url) {
         //builds the specified repo path using Maven and returns the status of the build
         System.out.println("Running mvn package");
         File file=new File(path);
@@ -211,13 +212,17 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         return buildStatus;
 
     }
-    //Sends a notification to the webhook
-    //And tell User dymnaically that Repo has
-    //Been successfully build
+
+    /**
+     * Sets status of a commit to one of the four possible values (error/pending/success/failure) with provided context and message
+     * @param token a token to access the repository
+     * @param status_url status url of the commit
+     * @param state state of the
+     * @param message the message to send to the commit
+     * @return "Successful 201" if status set was successful, "Unsucessful [responsecode]" if not
+     */
     public static String set_commit_status(String token, String status_url, int state,
                                            String message) {
-        //this function sets the status of a commit to one of the four possible values,
-        // with the provided context and message
         token= token.replaceFirst("HEaLO", "");
         String[] statelist =  {"error", "pending", "success", "failure"};
         try {
