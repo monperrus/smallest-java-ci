@@ -299,7 +299,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         String ids=String.valueOf(id-1);
         try
         {
-            File file=new File("./History.html");
+            File file=new File("./Build_History/History.html");
             Document document = Jsoup.parse(file, "utf-8");
             Element element = document.select("a").last();
             element.appendElement("a")
@@ -325,7 +325,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      */
     public static int JSOread(String Date,String sha,String log) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(
-                "./data.json"));
+                "./Build_History/data.json"));
         String s = null, ws = null;
         String js="";
         while ((s = br.readLine()) != null) {
@@ -333,7 +333,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         }
         br.close();
         BufferedWriter bw = new BufferedWriter(new FileWriter(
-                "./data.json"));
+                "./Build_History/data.json"));
         JSONArray features = new JSONArray(js);
         JSONObject properties = new JSONObject();
         properties.put("log", log);
