@@ -216,9 +216,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
             String line = null;
             int tag=0;
             while ((line = fg.readLine()) != null) {
-                {
-                    buildStatus="Build OK";
-                }
                 System.out.println(line);
                 log=log+line+"<br>";
                 String temp=line;
@@ -307,7 +304,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                     .attr("href","#")
                     .text(status_url).appendElement("br");
             element.appendElement("br");
-            Path output = Path.of("History.html");
+            Path output = Path.of("./Build_History/History.html");
             Files.writeString(output, document.outerHtml());
         }
         catch (IOException e)
