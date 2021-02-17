@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -21,6 +23,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  Skeleton of a ContinuousIntegrationServer which acts as webhook
@@ -40,8 +45,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        System.out.println(target);
-
         String who = request.getHeader("user-agent");
         if(who.contains("GitHub-Hookshot")) {
             String what = request.getHeader("X-GitHub-Event");
@@ -57,9 +60,10 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
 
                 String buildOK = "build not done";
                 String notifyOK = "notification not sent";
-
+                String [] build_res=new String[4];
                 if(cloneOK.contains("Cloning OK")){
-                    buildOK = buildAndTest("./cloned-repo", status_url);
+                    build_res = (buildAndTest("./cloned-repo", status_url));
+                    buildOK=build_res[0];
                 }
 
                 if(buildOK.contains("Build OK")){
@@ -67,13 +71,37 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                 } else {
                     notifyOK = set_commit_status(token, status_url, 3, "Build Failed");
                 }
-
+                int id = JSOread(build_res[1],build_res[2],build_res[3]);
+                JS_HTML(id,status_url);
                 System.out.println("Request handled");
 
                 if(notifyOK.contains("Notification sent successfully")){
                     System.out.println(notifyOK);
                 }
             }
+        }
+        else if(target.equals("/build-history.html")) {
+            System.out.println("Accessing build history log");
+            PrintWriter out = response.getWriter();
+
+            FileReader fr = new FileReader("build-history.html");
+            StringBuilder sb = new StringBuilder();
+
+            int k;
+            char ch;
+
+            while((k = fr.read()) != -1 ) {
+                ch = (char) k;
+                out.append(ch);
+            }
+
+            fr.close();
+            // Sends the http response with the contents of the build-history.html file
+            out.println(sb.toString());
+            out.close();
+        }
+        else {
+            System.out.println(target);
         }
     }
 
@@ -164,19 +192,23 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
 
         return cloneStatus;
     }
-
     /**
      * Builds and tests a specified repository
      * if BUILD SUCCESS, the directory is deleted
      * @param path The path to the cloned repo that should be built and tested
      * @param url Url to commit status
-     * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed"
+     * @return Array of information about the build status
      */
-    public static String buildAndTest(String path, String url) {
-        //builds the specified repo path using Maven and returns the status of the build
+    public static String[] buildAndTest(String path,String url) {
         System.out.println("Running mvn package");
         File file=new File(path);
         String buildStatus = "Build and test Failed";
+        String Date="";
+        String log="";
+        String sha="";
+        String[] tt1=url.split("/");
+        sha=tt1[tt1.length-1];
+        String [] res=new String[4];
         try {
             ProcessBuilder p1 = new ProcessBuilder(new String[]{"mvn","package"});
             p1.redirectErrorStream(true);
@@ -194,11 +226,17 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                     buildStatus="Build OK";
                 }
                 System.out.println(line);
+                log=log+line+"<br>";
                 String temp=line;
                 if((temp.contains("BUILD"))&&(temp.contains("SUCCESS")))
                 {
                     buildStatus="Build OK";
 
+                }
+                if((temp.contains("Finished at")))
+                {
+                    String []tt=temp.split(" ");
+                    Date=tt[tt.length-1];
                 }
             }
             // Delete the repository.
@@ -209,8 +247,11 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         } catch (IOException | InterruptedException e) {
             System.out.print("Could not build.");
         }
-        return buildStatus;
-
+        res[0]=buildStatus;
+        res[1]=Date;
+        res[2]=sha;
+        res[3]=log;
+        return res;
     }
 
     /**
@@ -253,6 +294,64 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
             e.printStackTrace();
             return "Unsuccessful: Exception";
         }
+    }
+
+    /**
+     * Update the HTML
+     * @param id the length of current history
+     * @param status_url the build url
+     */
+    public static void JS_HTML(int id,String status_url){
+        String ids=String.valueOf(id-1);
+        try
+        {
+            File file=new File("./History.html");
+            Document document = Jsoup.parse(file, "utf-8");
+            Element element = document.select("a").last();
+            element.appendElement("a")
+                    .attr("onclick","CreateHistory("+ids+")")
+                    .attr("href","#")
+                    .text(status_url).appendElement("br");
+            element.appendElement("br");
+            Path output = Path.of("History.html");
+            Files.writeString(output, document.outerHtml());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update the history JSON file.
+     * @param Date
+     * @param sha
+     * @param log
+     * @return return the length of current history
+     */
+    public static int JSOread(String Date,String sha,String log) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(
+                "./data.json"));
+        String s = null, ws = null;
+        String js="";
+        while ((s = br.readLine()) != null) {
+            js=js+s;
+        }
+        br.close();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                "./data.json"));
+        JSONArray features = new JSONArray(js);
+        JSONObject properties = new JSONObject();
+        properties.put("log", log);
+        properties.put("Date", Date);
+        properties.put("SHA", sha);
+        features.put(properties);
+        int id=features.length();
+        ws = features.toString();
+        bw.write(ws);
+        bw.flush();
+        bw.close();
+        return id;
     }
 
     /**
