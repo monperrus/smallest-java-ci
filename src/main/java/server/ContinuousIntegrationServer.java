@@ -64,6 +64,8 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
 
                 if(buildOK.contains("Build OK")){
                     notifyOK = set_commit_status(token, status_url, 2, "Build OK");
+                } else {
+                    notifyOK = set_commit_status(token, status_url, 3, "Build Failed");
                 }
 
                 System.out.println("Request handled");
