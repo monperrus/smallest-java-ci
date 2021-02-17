@@ -32,7 +32,7 @@ public class TestServer {
         JSONObject json_true = help_getJSON("src/test/java/server/testdata_getstatusurl_T.json");
 
         String statusRepoURL_true = getRepoURL(json_true);
-        assertEquals(statusRepoURL_true, "master https://github.com/gzh0528/ci-server.gitxxxxxxxxx");
+        assertEquals(statusRepoURL_true, "master https://github.com/gzh0528/ci-server.git");
 
 
     }

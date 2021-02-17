@@ -220,10 +220,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                 log=log+line+"<br>";
                 String temp=line;
                 if((temp.contains("BUILD"))&&(temp.contains("SUCCESS")))
-                {
-                    buildStatus="Build OK";
-
-                }
                 if((temp.contains("Finished at")))
                 {
                     String []tt=temp.split(" ");
