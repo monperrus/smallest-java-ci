@@ -9,7 +9,7 @@ This is a simple server for Continuous Integration development. It is meant to b
 
 **Jonatan Yao Håkansson (jonte450):** Testing,Notifify function helped together with Kalle
 
-**Elisabet Lövkvist (SQUEEEE):** Documaentation, code skeleton for server functions
+**Elisabet Lövkvist (SQUEEEE):** Documentation, code skeleton for server functions, tests
 
 **Kalle Meurman (Wizkas0):** Cloning the repo, sending notification to GitHub
 
