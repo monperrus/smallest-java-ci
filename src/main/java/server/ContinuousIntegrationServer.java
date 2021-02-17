@@ -105,12 +105,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         }
     }
 
-    public int dummyFunction() {
-        //dummy function to start testing
-        System.out.println("Calling dummyFunction");
-        return 1;
-    }
-
     /**
      * Creates a JSON object from the body of a http POST request from a GitHub webhook.
      * @param br contains the body of a http POST request
