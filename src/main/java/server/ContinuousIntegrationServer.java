@@ -105,10 +105,13 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         br.close();
 
         String ss = wholeStr.toString();
-
+        String dummy_json = "{}";
         //System.out.println(ss);
-
-        return new JSONObject(ss);
+        try{
+            return new JSONObject(ss);
+        }catch (JSONException e){
+            return new JSONObject(dummy_json);
+        }
     }
 
     /**
@@ -142,7 +145,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         String url = json.getJSONObject("repository").getString("statuses_url");
         String replace = "{sha}";
         complete_url = url.replace(replace, commit_sha);
-        System.out.println(complete_url);
+        System.out.println(json.toString());
         return complete_url;
     }
     /**
