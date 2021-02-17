@@ -7,7 +7,7 @@ This is a simple server for Continuous Integration development. It is meant to b
 
 **Zehua Guo (gzh0528):** Cloning, building and testing the repository 
 
-**Jonatan Yao Håkansson (jonte450):** Testing Notifify function helped together with Kalle
+**Jonatan Yao Håkansson (jonte450):** Testing,Notifify function helped together with Kalle
 
 **Elisabet Lövkvist (SQUEEEE):** Documaentation, code skeleton for server functions
 
