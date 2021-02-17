@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+ <head> 
+  <title>My build history</title> 
+ </head> 
+ <body> 
+  <a href="#">These are the URLs<br></a>
+  <a onclick="CreateHistory(0)" href="#">https://api.github.com/repos/gzh0528/ci-server/statuses/cd578476aaae3f8d5c23d6ab2e87ef93601ef6e7<br><a onclick="CreateHistory(1)" href="#">https://api.github.com/repos/gzh0528/ci-server/statuses/ee22fad706519f89b6bce12be35ff04c0f859be9<br></a><br></a>
+  <br> 
+  <br> 
+  <p id="Show"></p> 
+  <script>
+    function CreateHistory(id) {
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                var history=data;
+                var col = [];
+                for (var i = 0; i < history.length; i++) {
+                    for (var key in history[i]) {
+                        if (col.indexOf(key) === -1) {
+                            col.push(key);
+                        }
+                    }
+                }
+                var table = document.createElement("table");
+                var tr = table.insertRow(-1);
+                for (var i = 0; i < col.length; i++) {
+                    var th = document.createElement("th");
+                    th.innerHTML = col[i];
+                    tr.appendChild(th);
+                }
+                for (var i = 0; i < history.length; i++) {
+                    tr = table.insertRow(-1);
+                    for (var j = 0; j < col.length; j++) {
+                        var tabCell = tr.insertCell(-1);
+                        if (i==id)
+                        {
+                            tabCell.innerHTML = history[i][col[j]];
+                        }
+                    }
+                }
+                var divContainer = document.getElementById("Show");
+                divContainer.innerHTML = "";
+                divContainer.appendChild(table);
+
+            });
+        return false;
+    }
+</script>  
+ </body>
+</html>
