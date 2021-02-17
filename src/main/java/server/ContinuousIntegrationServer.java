@@ -49,12 +49,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                 BufferedReader br = request.getReader();
                 //read the request
                 JSONObject JSON = getJSON(br);
-                //write test_file
-                try {
-                    JsonWrite(JSON);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
                 String URL = getRepoURL(JSON);
                 String status_url = getStatusUrl(JSON);
 
@@ -253,14 +248,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
             e.printStackTrace();
             return "Unsuccessful: Exception";
         }
-    }
-
-    //for test
-    public static void JsonWrite(JSONObject obj) throws Exception{
-        OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream("./test_file.json"),"UTF-8");
-        osw.write(obj.toString());
-        osw.flush();
-        osw.close();
     }
 
     /**
