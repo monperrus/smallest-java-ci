@@ -68,3 +68,14 @@ We shutdown everything:
 
 Notes:
 * by default, Github delivers a `push` JSON payload, documented here: <https://developer.github.com/v3/activity/events/types/#pushevent>, this information can be used to get interesting information about the commit that has just been pushed.
+### Keep the history of the past builds
+We have a JSON file and HTML file to keep the history. To see the history, you can click the 
+
+```
+mvn package
+```
+
+Then start the server on your local machine:
+```
+java -jar target/gs-maven-0.1.0.jar
+```
