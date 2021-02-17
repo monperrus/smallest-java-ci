@@ -89,7 +89,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
     }
 
     /**
-     * Creates a JSON object from the body of a http POST request from a GitHub webhook. 
+     * Creates a JSON object from the body of a http POST request from a GitHub webhook.
      * @param br contains the body of a http POST request
      * @return A JSON object containing the parameters from a GitHub webhook
      * @throws IOException
@@ -116,9 +116,9 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
 
     /**
      * Gets the GitHub repo url and recently pushed branch from the input json
-     * and combine these to form a compatible string to use with the 'git clone' command. 
+     * and combine these to form a compatible string to use with the 'git clone' command.
      * @param json A JSON object containing the parameters from a GitHub webhook
-     * @return A string with the recently pushed branch and the GitHub repo url. 
+     * @return A string with the recently pushed branch and the GitHub repo url.
      */
     public static String getRepoURL(JSONObject json){
         //gets the URL for repository to be cloned
@@ -145,7 +145,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         String url = json.getJSONObject("repository").getString("statuses_url");
         String replace = "{sha}";
         complete_url = url.replace(replace, commit_sha);
-        System.out.println(json.toString());
         return complete_url;
     }
     /**
@@ -175,7 +174,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
      * Build and test ./cloned-repo directory
      * if BUILD SUCCESS, deletes this directory.
      * @param path The path to the github repo that should be built and tested
-     * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed" 
+     * @return "Build OK" if the build and test were successful and otherwise "Build and test Failed"
      */
     public static String buildAndTest(String path,String url) {
         //builds the specified repo path using Maven and returns the status of the build
@@ -264,8 +263,8 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         osw.close();
     }
 
-    /** 
-     * Main method. 
+    /**
+     * Main method.
      * Used to start the CI server in command line.
      * @param args Not used
      */
