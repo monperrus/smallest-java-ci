@@ -40,8 +40,6 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         response.setStatus(HttpServletResponse.SC_OK);
         baseRequest.setHandled(true);
 
-        System.out.println(target);
-
         String who = request.getHeader("user-agent");
         if(who.contains("GitHub-Hookshot")) {
             String what = request.getHeader("X-GitHub-Event");
@@ -74,6 +72,29 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
                     System.out.println(notifyOK);
                 }
             }
+        }
+        else if(target.equals("/build-history.html")) {
+            System.out.println("Accessing build history log");
+            PrintWriter out = response.getWriter();
+            
+            FileReader fr = new FileReader("build-history.html");
+            StringBuilder sb = new StringBuilder();
+
+            int k;
+            char ch;
+
+            while((k = fr.read()) != -1 ) {
+                ch = (char) k;
+                out.append(ch);
+            }
+            
+            fr.close();
+            // Sends the http response with the contents of the build-history.html file
+            out.println(sb.toString());   
+            out.close();
+        }
+        else {
+            System.out.println(target);
         }
     }
 
