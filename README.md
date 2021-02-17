@@ -3,7 +3,7 @@ A small Java Continuous Integration server.
 This is a simple server for Continuous Integration development. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. Maven is used to build and test, and notifications to the repository are sent through the GitHub status API. The server keeps a history of the past builds and log files attached to them. 
 
 ## Contributions
-**Philip Andersson (CSCphilp):** Maven handling, JSON handling, bug fixes
+**Philip Andersson (CSCphilp):** Maven handling, JSON handling, bug fixes, docs
 
 **Zehua Guo (gzh0528):** Cloning, building and testing the repository, Build History
 
