@@ -1,6 +1,6 @@
 A small Java Continuous Integration server.
 ===========================================================
-This is a simple server for Continuous Integration development. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. Maven is used to build and test, and notifications to the repository are sent through the GitHub status API. 
+This is a simple server for Continuous Integration development. It is meant to be called as webhook by Github. The HTTP part of it is based on Jetty. Maven is used to build and test, and notifications to the repository are sent through the GitHub status API. The server keeps a history of the past builds and log files attached to them. 
 
 ## Contributions
 **Philip Andersson (CSCphilp):** Maven handling, JSON handling, bug fixes
@@ -68,6 +68,6 @@ We shutdown everything:
 
 Notes:
 * by default, Github delivers a `push` JSON payload, documented here: <https://developer.github.com/v3/activity/events/types/#pushevent>, this information can be used to get interesting information about the commit that has just been pushed.
-### Keep the history of the past builds
-We have a JSON file and HTML file to keep the history. The history data is stored in data.json. To see the history, you can click the html file called History.html in Build_History folder. The html page contains a list of URLs. By clicking each of them, you will see the history of that build. 
 
+### View history of past builds
+The history data is stored in data.json. To see the history, you can click the html file called History.html in the Build_History folder. The html page contains a list of URLs. By clicking each of them, you will see the log of that build. 
