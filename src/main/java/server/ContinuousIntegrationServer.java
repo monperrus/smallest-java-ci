@@ -133,6 +133,7 @@ public class ContinuousIntegrationServer<BASE64Encoder, BASE64Decoder> extends A
         String git_url_fixed = git_url.replaceFirst("git", "https");
         String full_url;
         full_url = branch + " " + git_url_fixed;
+        System.out.println(full_url);
         return full_url;
     }
 

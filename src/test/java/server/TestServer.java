@@ -34,23 +34,14 @@ public class TestServer {
 
     @Test
     public void test_getRepoURL(){
-      //Test True
-      JSONObject json_true = new JSONObject();
-      JSONObject git_url = new JSONObject();
-      git_url.put("git_url","https://github.com/DD2480-Group-15/ci-server");
-      json_true.put("repository", git_url);
-      json_true.put("ref","/tree/issue/22");
-      String true_return = "tree/issue/22" +""+"git://github.com/DD2480-Group-15/ci-server";
-      //assertEquals(getRepoURL(json_true), true_return);
+      //True case: An expected JSON file is inputed, should produce a url
+        JSONObject json_true = help_getJSON("src/test/java/server/testdata_getstatusurl_T.json");
+        //JSONObject json_false = help_getJSON("src/test/java/server/testdata_getstatusurl_F.json");
 
-      //Test False
-      JSONObject json_false = new JSONObject();
-      JSONObject git_url_1 = new JSONObject();
-      git_url_1.put("git_url","/tree/issue/22");
-      json_false.put("repository", git_url_1);
-      json_false.put("ref","https://github.com/DD2480-Group-15/ci-server");
-      String false_return = "tree/issue/22" +""+"git://github.com/DD2480-Group-15/ci-server";
-      //assertNotEquals(getRepoURL(json_false), false_return);
+        String statusRepoURL_true = getRepoURL(json_true);
+        assertEquals(statusRepoURL_true, "master https://github.com/gzh0528/ci-server.git");
+
+
     }
 
     @Test
